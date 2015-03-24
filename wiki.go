@@ -22,14 +22,18 @@ type Wiki struct {
 func (w *Wiki) Create(path string) error {
 	p, err := w.Local(path)
 	if (err != nil) { return err }
-	return ioutil.WriteFile(p, []byte("# " + path), 0600)
+	err = ioutil.WriteFile(p, []byte("# " + path), 0600)
+	if (err != nil) { return err }
+	return w.Commit(p, "Created " + path)
 }
 
 // Edit changes the contents of a file in the given wiki
 func (w *Wiki) Edit(path string, contents []byte) error {
 	p, err := w.Local(path)
 	if (err != nil) { return err }
-	return ioutil.WriteFile(p, contents, 0600)
+	err = ioutil.WriteFile(p, contents, 0600)
+	if (err != nil) { return err }
+	return w.Commit(p, "Edit to " + path)
 }
 
 // Remove removes a file in the given wiki
@@ -37,8 +41,9 @@ func (w *Wiki) Edit(path string, contents []byte) error {
 func (w *Wiki) Remove(path string) error {
 	p, err := w.Local(path)
 	if (err != nil) { return err }
-	os.Remove(p)
-	return nil
+	err = os.Remove(p)
+	if (err != nil) { return err }
+	return w.Commit(p, "Deleted " + path)
 }
 
 ////////// Viewing operations
