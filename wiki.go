@@ -22,6 +22,7 @@ type Wiki struct {
 func (w *Wiki) Create(path string) error {
 	p, err := w.Local(path)
 	if (err != nil) { return err }
+	err = os.MkdirAll(filepath.Dir(p), 0600)
 	err = ioutil.WriteFile(p, []byte("# " + path), 0600)
 	if (err != nil) { return err }
 	return w.Commit(p, "Created " + path)
