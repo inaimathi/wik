@@ -4,23 +4,25 @@ import (
 	"net/http"
 )
 
+func WikiHandlers (wiki *Wiki) {
+	http.HandleFunc("/", ShowPage(wiki))
+	http.HandleFunc("/edit/", EditPage(wiki))
+	http.HandleFunc("/api/remove/", RemoveAPI(wiki))
+	http.HandleFunc("/api/edit/", EditAPI(wiki))
+	http.HandleFunc("/api/create/", CreateAPI(wiki))
+}
+
 func ShowPage (wiki *Wiki) func (http.ResponseWriter, *http.Request) {
 	return func (w http.ResponseWriter, r *http.Request) {
 		body, err := wiki.Render(r.URL.Path)
-		if err == nil {
-			w.Header().Set("Content-Type", "text/html")
-			w.Write(body) 
-		}
+		if err == nil { WritePage(w, body) }
 	}
 }
 
 func EditPage (wiki *Wiki) func (http.ResponseWriter, *http.Request) {
 	return func (w http.ResponseWriter, r *http.Request) {
 		body, err := wiki.Raw(r.URL.Path[len("/edit/"):])
-		if err == nil {
-			// w.Header().Set("Content-Type")
-			w.Write(body)
-		}
+		if err == nil { WritePage(w, body) }
 	}
 }
 
@@ -55,10 +57,7 @@ func EditAPI (wiki *Wiki) func (http.ResponseWriter, *http.Request) {
 	}
 }
 
-func WikiHandlers (wiki *Wiki) {
-	http.HandleFunc("/", ShowPage(wiki))
-	http.HandleFunc("/edit/", EditPage(wiki))
-	http.HandleFunc("/api/remove/", RemoveAPI(wiki))
-	http.HandleFunc("/api/edit/", EditAPI(wiki))
-	http.HandleFunc("/api/create/", CreateAPI(wiki))
+func WritePage(w http.ResponseWriter, cont []byte) {
+	w.Header().Set("Content-Type", "text/html")
+	w.Write(PageWrapper(cont))
 }
