@@ -1,0 +1,13 @@
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+  <head>
+  </head>
+  <body>
+    <form action="/api/edit/TODO" method="POST">
+      <textarea id="new_contents" name="new_contents" language="markdown">{{.}}</textarea>
+      <div class="controls">
+        <input class="submit" type="submit" value="Save" />
+        <a href="/TODO">Cancel</a>
+      </div>
+    </form>
+  </body>
+</html>
