@@ -16,16 +16,17 @@ func WikiHandlers (wiki *Wiki) {
 func ShowPage (wiki *Wiki) func (http.ResponseWriter, *http.Request) {
 	t, _ := template.ParseFiles("static/templates/show.html")
 	return func (w http.ResponseWriter, r *http.Request) {
-		body, err := wiki.Render(r.URL.Path)
-		if err == nil { t.Execute(w, template.HTML(body)) }
+		pg, err := wiki.GetPage(r.URL.Path)
+		pg.ProcessMarkdown()
+		if err == nil { t.Execute(w, template.HTML(pg.Body)) }
 	}
 }
 
 func ShowEdit (wiki *Wiki) func (http.ResponseWriter, *http.Request) {
 	t, _ := template.ParseFiles("static/templates/edit.html")
 	return func (w http.ResponseWriter, r *http.Request) {
-		body, err := wiki.Raw(r.URL.Path[len("/edit/"):])
-		if err == nil { t.Execute(w, template.HTML(body)) }
+		pg, err := wiki.GetPage(r.URL.Path[len("/edit/"):])
+		if err == nil { t.Execute(w, template.HTML(pg.Raw)) }
 	}
 }
 

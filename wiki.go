@@ -15,6 +15,13 @@ type Wiki struct {
 	Path string
 }
 
+type Page struct {
+	Path string
+	URI string
+	Raw []byte
+	Body []byte
+}
+
 ////////// Mutating operations
 
 // Create creates a new file in the given wiki
@@ -47,26 +54,20 @@ func (w *Wiki) Remove(path string) error {
 	return w.Commit(p, "Deleted " + path)
 }
 
-////////// Viewing operations
-
-// Raw takes a path to a file in the given wiki and
-// returns its raw contents.
-func (w *Wiki) Raw(path string) ([]byte, error) {
+// Reads a page from disk and returns a pointer to the Page constructed from it.
+// Does not render input by default; if rendered output is desired, the caller
+// should also call .Render on the result of GetPage
+func (w *Wiki) GetPage(path string) (*Page, error) {
 	p, err := w.Local(path)
-	if (err != nil) { return nil, err }
-	return ioutil.ReadFile(p)
+	if err != nil { return &Page{}, err }
+	body, err := ioutil.ReadFile(p)
+	if err != nil { return &Page{}, err }
+	return &Page{Path: p, URI: filepath.Clean(path), Raw: body }, nil
 }
 
-// Render takes a path to a file in the given wiki and
-// returns its contents passed through a markdown converter
-// followed by an XSS sanitizer.
-func (w *Wiki) Render(path string) ([]byte, error) {
-	p, err := w.Local(path)
-	if (err != nil) { return nil, err }
-	body, err := ioutil.ReadFile(p)
-	if (err != nil) { return nil, err }
-	unsafe := blackfriday.MarkdownCommon(body)
-	return bluemonday.UGCPolicy().SanitizeBytes(unsafe), nil
+func (pg *Page) ProcessMarkdown() {
+	unsafe := blackfriday.MarkdownCommon(pg.Raw)
+	pg.Body = bluemonday.UGCPolicy().SanitizeBytes(unsafe)
 }
 
 ////////// Git commands and various utility
