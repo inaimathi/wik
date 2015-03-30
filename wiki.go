@@ -25,7 +25,6 @@ type Page struct {
 ////////// Mutating operations
 
 // Create creates a new file in the given wiki
-// TODO - create all intervening directories
 func (w *Wiki) Create(path string) error {
 	p, err := w.Local(path)
 	if (err != nil) { return err }
@@ -52,6 +51,12 @@ func (w *Wiki) Remove(path string) error {
 	err = os.Remove(p)
 	if (err != nil) { return err }
 	return w.Commit(p, "Deleted " + path)
+}
+
+func (w *Wiki) GetDir(path string) ([]os.FileInfo, error) {
+	p, err := w.Local(path)
+	if err != nil { return nil, err }
+	return ioutil.ReadDir(p)
 }
 
 // Reads a page from disk and returns a pointer to the Page constructed from it.
@@ -95,10 +100,9 @@ func (w *Wiki) ExecIn(command string, args ...string) error {
 // repo if joined with it. Returns either 
 //   [sanitized path], nil    // if the given path is valid
 //   "", error                // otherwise
-// TODO exclude files present in the .git subdirectory
 func (w *Wiki) Local(path string) (string, error) {
 	p := filepath.Clean(filepath.Join(w.Path, path))
-	if (strings.HasPrefix(p, w.Path)) {
+	if (strings.HasPrefix(p, w.Path) && !strings.HasPrefix(p, filepath.Join(w.Path, ".git"))) {
 		return p, nil
 	}
 	return "", errors.New("path outside of repo")
