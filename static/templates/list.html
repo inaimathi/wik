@@ -1,1 +1,10 @@
-This is a list template.
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+  <head></head>
+  <body>
+    <ul class="file-list">
+      {{ range $file := . }}
+      <li>{{$file.Name}}</li>
+      {{ end }}
+    </ul>
+  </body>
+</html>

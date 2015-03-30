@@ -53,10 +53,22 @@ func (w *Wiki) Remove(path string) error {
 	return w.Commit(p, "Deleted " + path)
 }
 
+// Reads a directory on disk and returns a list of os.FileInfo
+// for each visible file in the directory.
+// If the given directory is not in the given wiki, returns an error instead.
 func (w *Wiki) GetDir(path string) ([]os.FileInfo, error) {
 	p, err := w.Local(path)
 	if err != nil { return nil, err }
-	return ioutil.ReadDir(p)
+	files, err := ioutil.ReadDir(p)
+	if err != nil { return nil, err }
+	res := make([]os.FileInfo, 0, len(files))
+	for ix := range files {
+		f := files[ix]
+		if !strings.HasPrefix(f.Name(), ".") {
+			res = append(res, f)
+		}
+	}
+	return res, nil
 }
 
 // Reads a page from disk and returns a pointer to the Page constructed from it.
