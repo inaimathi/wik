@@ -3,12 +3,11 @@
   <head>
   </head>
   <body>
-    <p>Editing {{ .URI }} ...</p>
-    <form action="/api/edit/TODO" method="POST">
+    <form action="/api/edit/{{.URI}}" method="POST">
       <textarea id="new_contents" name="new_contents" language="markdown">{{.Raw}}</textarea>
       <div class="controls">
         <input class="submit" type="submit" value="Save" />
-        <a href="/TODO">Cancel</a>
+        <a href="/{{.URI}}">Cancel</a>
       </div>
     </form>
   </body>

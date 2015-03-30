@@ -4,6 +4,7 @@ import (
 	"os"
 	"net/http"
 	"html/template"
+	"path/filepath"
 )
 
 func WikiHandlers (wiki *Wiki) {
@@ -48,7 +49,8 @@ func RemovePage (wiki *Wiki) func (http.ResponseWriter, *http.Request) {
 	return func (w http.ResponseWriter, r *http.Request) {
 		err := wiki.Remove(r.URL.Path[len("/api/remove/"):])
 		if err == nil {
-			http.Redirect(w, r, "/", http.StatusFound)
+			path := r.URL.Path[len("/api/remove"):]
+			http.Redirect(w, r, filepath.Dir(path), http.StatusFound)
 		}
 	}
 }
