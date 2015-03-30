@@ -28,7 +28,7 @@ func ShowPage (wiki *Wiki) func (http.ResponseWriter, *http.Request) {
 			} else if err == nil {
 				pg, e := wiki.GetPage(r.URL.Path)
 				pg.ProcessMarkdown()
-				if e == nil { show.Execute(w, template.HTML(pg.Body)) }
+				if e == nil { show.Execute(w, pg) }
 			} else {
 				create.Execute(w, r.URL.Path)
 			}
@@ -40,7 +40,7 @@ func ShowEdit (wiki *Wiki) func (http.ResponseWriter, *http.Request) {
 	t, _ := template.ParseFiles("static/templates/edit.html")
 	return func (w http.ResponseWriter, r *http.Request) {
 		pg, err := wiki.GetPage(r.URL.Path[len("/edit/"):])
-		if err == nil { t.Execute(w, template.HTML(pg.Raw)) }
+		if err == nil { t.Execute(w, pg) }
 	}
 }
 

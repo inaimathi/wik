@@ -9,6 +9,7 @@ import (
 	"io/ioutil"
 	"github.com/microcosm-cc/bluemonday"
 	"github.com/russross/blackfriday"
+	"html/template"
 )
 
 type Wiki struct {
@@ -18,9 +19,16 @@ type Wiki struct {
 type Page struct {
 	Path string
 	URI string
-	Raw []byte
-	Body []byte
+	Raw string
+	Body template.HTML
 }
+
+type PageInfo struct {
+	URI string
+	Name string
+	IsDir bool
+}
+
 
 ////////// Mutating operations
 
@@ -28,7 +36,7 @@ type Page struct {
 func (w *Wiki) Create(path string) error {
 	p, err := w.Local(path)
 	if (err != nil) { return err }
-	err = os.MkdirAll(filepath.Dir(p), 0600)
+	err = os.MkdirAll(filepath.Dir(p), 0777)
 	err = ioutil.WriteFile(p, []byte("# " + path), 0600)
 	if (err != nil) { return err }
 	return w.Commit(p, "Created " + path)
@@ -56,16 +64,18 @@ func (w *Wiki) Remove(path string) error {
 // Reads a directory on disk and returns a list of os.FileInfo
 // for each visible file in the directory.
 // If the given directory is not in the given wiki, returns an error instead.
-func (w *Wiki) GetDir(path string) ([]os.FileInfo, error) {
+func (w *Wiki) GetDir(path string) ([]PageInfo, error) {
 	p, err := w.Local(path)
 	if err != nil { return nil, err }
 	files, err := ioutil.ReadDir(p)
 	if err != nil { return nil, err }
-	res := make([]os.FileInfo, 0, len(files))
+	res := make([]PageInfo, 0, len(files))
 	for ix := range files {
 		f := files[ix]
-		if !strings.HasPrefix(f.Name(), ".") {
-			res = append(res, f)
+		n := f.Name()
+		if !strings.HasPrefix(n, ".") {
+			inf := PageInfo{Name: n, URI: filepath.Join(path, n), IsDir: f.IsDir()}
+			res = append(res, inf)
 		}
 	}
 	return res, nil
@@ -79,12 +89,12 @@ func (w *Wiki) GetPage(path string) (*Page, error) {
 	if err != nil { return &Page{}, err }
 	body, err := ioutil.ReadFile(p)
 	if err != nil { return &Page{}, err }
-	return &Page{Path: p, URI: filepath.Clean(path), Raw: body }, nil
+	return &Page{Path: p, URI: filepath.Clean(path), Raw: string(body) }, nil
 }
 
 func (pg *Page) ProcessMarkdown() {
-	unsafe := blackfriday.MarkdownCommon(pg.Raw)
-	pg.Body = bluemonday.UGCPolicy().SanitizeBytes(unsafe)
+	unsafe := blackfriday.MarkdownCommon([]byte(pg.Raw))
+	pg.Body = template.HTML(bluemonday.UGCPolicy().SanitizeBytes(unsafe))
 }
 
 ////////// Git commands and various utility

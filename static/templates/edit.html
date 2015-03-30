@@ -1,9 +1,11 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
   <head>
   </head>
   <body>
+    <p>Editing {{ .URI }} ...</p>
     <form action="/api/edit/TODO" method="POST">
-      <textarea id="new_contents" name="new_contents" language="markdown">{{.}}</textarea>
+      <textarea id="new_contents" name="new_contents" language="markdown">{{.Raw}}</textarea>
       <div class="controls">
         <input class="submit" type="submit" value="Save" />
         <a href="/TODO">Cancel</a>
