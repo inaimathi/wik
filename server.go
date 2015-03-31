@@ -5,6 +5,7 @@ import (
 	"net/http"
 	"html/template"
 	"path/filepath"
+	"strings"
 )
 
 func WikiHandlers (wiki *Wiki) {
@@ -75,4 +76,21 @@ func EditPage (wiki *Wiki) func (http.ResponseWriter, *http.Request) {
 			http.Redirect(w, r, "/" + path, http.StatusFound)
 		}
 	}
+}
+
+type Crumb struct {
+	Name string
+	URI string
+}
+
+func Breadcrumbs(path string) []Crumb {
+	split := strings.Split(path, "/")
+	res := make([]Crumb, 0, len(split)+1)
+	res = append(res, Crumb{Name: "home", URI: "/"})
+	for ix := range split {
+		if split[ix] != "" {
+			res = append(res, Crumb{Name: split[ix], URI: strings.Join(split[0:ix+1], "/")})
+		}
+	}
+	return res
 }
