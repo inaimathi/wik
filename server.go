@@ -83,18 +83,27 @@ type Crumb struct {
 	URI string
 }
 
-func Breadcrumbs(path string) []Crumb {
-	split := strings.Split(path, "/")
-	res := make([]Crumb, 0, len(split)+1)
-	res = append(res, Crumb{Name: "home", URI: "/"})
-	for ix := range split[:len(split)-1] {
-		if split[ix] != "" {
-			res = append(res, Crumb{Name: split[ix], URI: strings.Join(split[0:ix+1], "/")})
-		}
-	}
-	return res
+type Trail struct {
+	Links []Crumb
+	Name string
 }
 
-func (pg *Page) CrumbsOf() []Crumb {
+func Breadcrumbs(path string) Trail {
+	split := strings.Split(path, "/")
+	links := make([]Crumb, 0, len(split)+1)
+	links = append(links, Crumb{Name: "home", URI: "/"})
+	for ix := range split[:len(split)-1] {
+		if split[ix] != "" {
+			links = append(links, Crumb{Name: split[ix], URI: strings.Join(split[0:ix+1], "/")})
+		}
+	}
+	if len(split) > 1 {
+		return Trail{ Links: links, Name: split[len(split)-1]}
+	} else {
+		return Trail{ Links: links, Name: ""}
+	}
+}
+
+func (pg *Page) CrumbsOf() Trail {
 	return Breadcrumbs(pg.URI)
 }
