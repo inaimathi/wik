@@ -94,3 +94,7 @@ func Breadcrumbs(path string) []Crumb {
 	}
 	return res
 }
+
+func (pg *Page) CrumbsOf() []Crumb {
+	return Breadcrumbs(pg.URI)
+}
