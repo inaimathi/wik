@@ -3,7 +3,7 @@
   <head></head>
   <body>
     {{ range $crumb := .CrumbsOf }}
-    <a href="{{$crumb.URI}}">{{ $crumb.Name }}</a>
+    <a href="{{$crumb.URI}}">{{ $crumb.Name }}
     {{ end }}
     <form method="POST" id="" action="/api/remove{{.URI}}">
       <input type="submit" name="submit" value="Remove" class="submit" />

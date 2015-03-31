@@ -87,7 +87,7 @@ func Breadcrumbs(path string) []Crumb {
 	split := strings.Split(path, "/")
 	res := make([]Crumb, 0, len(split)+1)
 	res = append(res, Crumb{Name: "home", URI: "/"})
-	for ix := range split {
+	for ix := range split[:len(split)-1] {
 		if split[ix] != "" {
 			res = append(res, Crumb{Name: split[ix], URI: strings.Join(split[0:ix+1], "/")})
 		}
