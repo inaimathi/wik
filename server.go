@@ -88,6 +88,11 @@ type Trail struct {
 	Name string
 }
 
+// Breadcrumbs takes a URI and returns the Trail of breadcrumbs that lead to it. 
+//   "/"		=> {[{"home" "/"}] ""} // this one should probably be {[] ""} instead
+//   "/test.md"		=> {[{"home" "/"}] "test.md"}
+//   "/a/b/test.md"	=>   {[{"home" "/"} {"a" "/a"} {"b" "/a/b"}] "test.md"}
+//   "/a/b/c/test.md"	=> {[{"home" "/"} {"a" "/a"} {"b" "/a/b"} {"c" "/a/b/c"}] "test.md"}
 func Breadcrumbs(uri string) Trail {
 	split := strings.Split(uri, "/")
 	links := make([]Crumb, 0, len(split)+1)
@@ -104,6 +109,7 @@ func Breadcrumbs(uri string) Trail {
 	}
 }
 
+// Helper method for templates. Calls Breadcrumbs on the URI of a *Page
 func (pg *Page) CrumbsOf() Trail {
 	return Breadcrumbs(pg.URI)
 }
