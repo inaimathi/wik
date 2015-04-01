@@ -2,8 +2,8 @@
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
   <head></head>
   <body>
-    / {{ $trail := .CrumbsOf }}
-    {{ range $crumb := $trail.Links }}
+    {{ $trail := .CrumbsOf }}
+    / {{ range $crumb := $trail.Links }}
     <a href="{{$crumb.URI}}">{{ $crumb.Name }}</a> / 
     {{ end }}
     {{ $trail.Name }}

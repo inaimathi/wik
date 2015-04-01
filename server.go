@@ -88,8 +88,8 @@ type Trail struct {
 	Name string
 }
 
-func Breadcrumbs(path string) Trail {
-	split := strings.Split(path, "/")
+func Breadcrumbs(uri string) Trail {
+	split := strings.Split(uri, "/")
 	links := make([]Crumb, 0, len(split)+1)
 	links = append(links, Crumb{Name: "home", URI: "/"})
 	for ix := range split[:len(split)-1] {
