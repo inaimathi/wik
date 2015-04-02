@@ -1,0 +1,7 @@
+body { font-family: sans-serif; }
+
+.controls .breadcrumbs { display: inline-block; }
+.controls .remove, .controls .edit { float: right; margin-left: 15px; }
+
+.editor { height: 100%; }
+.editor textarea { width: 90%; height: 500px; }
