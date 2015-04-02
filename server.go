@@ -19,21 +19,26 @@ func WikiHandlers (wiki *Wiki) {
 func ShowPage (wiki *Wiki) func (http.ResponseWriter, *http.Request) {
 	return func (w http.ResponseWriter, r *http.Request) {
 		show := template.Must(template.ParseFiles("static/templates/show.html", "static/templates/base.html"))
-		create, _ := template.ParseFiles("static/templates/create.html")
+		create := template.Must(template.ParseFiles("static/templates/create.html", "static/templates/base.html"))
 		flist := template.Must(template.ParseFiles("static/templates/list.html", "static/templates/base.html"))
 		p, err := wiki.Local(r.URL.Path)
 		if err == nil { 
 			info, err := os.Stat(p)
 			if err == nil && info.IsDir() {
 				dir, e := wiki.GetDir(r.URL.Path)
-				lst := &List{URI: r.URL.Path, Links: dir}
-				if e == nil { flist.ExecuteTemplate(w, "base", lst) }
+				if e == nil { 
+					lst := &List{URI: r.URL.Path, Links: dir}
+					flist.ExecuteTemplate(w, "base", lst)
+				}
 			} else if err == nil {
 				pg, e := wiki.GetPage(r.URL.Path)
-				pg.ProcessMarkdown()
-				if e == nil { show.ExecuteTemplate(w, "base", pg) }
+				if e == nil { 
+					pg.ProcessMarkdown()
+					show.ExecuteTemplate(w, "base", pg) 
+				}
 			} else {
-				create.Execute(w, r.URL.Path)
+				pg := &Page{ URI: r.URL.Path }
+				create.ExecuteTemplate(w, "base", pg)
 			}
 		}
 	}

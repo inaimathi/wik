@@ -3,13 +3,17 @@
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
   <head>
     {{template "head" .}}
+    <link rel="stylesheet" href="/static/css/wik.css" type="text/css" media="screen"  />
   </head>
   <body>
-    {{ $trail := .CrumbsOf }}
-    / {{ range $crumb := $trail.Links }}
-    <a href="{{$crumb.URI}}">{{ $crumb.Name }}</a> / 
-    {{ end }}
-    {{ $trail.Name }}
+    <div class="controls">
+      {{ $trail := .CrumbsOf }}
+      / {{ range $crumb := $trail.Links }}
+      <a href="{{$crumb.URI}}">{{ $crumb.Name }}</a> / 
+      {{ end }}
+      {{ $trail.Name }}
+      {{ template "controls" .}}
+    </div>
     {{template "body" .}}
   </body>
 </html>

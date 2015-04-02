@@ -1,8 +1,10 @@
 {{define "head"}}<title>A Page</title>{{end}}
-{{define "body"}}
+
+{{define "controls"}}
 <form method="POST" id="" action="/api/remove{{.URI}}">
   <input type="submit" name="submit" value="Remove" class="submit" />
 </form>
 <a href="/edit{{.URI}}">Edit</a>
-{{.Body}}
 {{end}}
+
+{{define "body"}}{{.Body}}{{end}}
