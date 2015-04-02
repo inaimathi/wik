@@ -17,10 +17,10 @@ func WikiHandlers (wiki *Wiki) {
 }
 
 func ShowPage (wiki *Wiki) func (http.ResponseWriter, *http.Request) {
-	show := template.Must(template.ParseFiles("static/templates/show.html", "static/templates/base.html"))
-	create, _ := template.ParseFiles("static/templates/create.html")
-	flist := template.Must(template.ParseFiles("static/templates/list.html", "static/templates/base.html"))
 	return func (w http.ResponseWriter, r *http.Request) {
+		show := template.Must(template.ParseFiles("static/templates/show.html", "static/templates/base.html"))
+		create, _ := template.ParseFiles("static/templates/create.html")
+		flist := template.Must(template.ParseFiles("static/templates/list.html", "static/templates/base.html"))
 		p, err := wiki.Local(r.URL.Path)
 		if err == nil { 
 			info, err := os.Stat(p)
@@ -40,8 +40,8 @@ func ShowPage (wiki *Wiki) func (http.ResponseWriter, *http.Request) {
 }
 
 func ShowEdit (wiki *Wiki) func (http.ResponseWriter, *http.Request) {
-	t := template.Must(template.ParseFiles("static/templates/edit.html", "static/templates/base.html"))
 	return func (w http.ResponseWriter, r *http.Request) {
+		t := template.Must(template.ParseFiles("static/templates/edit.html", "static/templates/base.html"))
 		pg, err := wiki.GetPage(r.URL.Path[len("/edit"):])
 		if err == nil { t.ExecuteTemplate(w, "base", pg) }
 	}
@@ -95,11 +95,15 @@ type Trail struct {
 }
 
 // Breadcrumbs takes a URI and returns the Trail of breadcrumbs that lead to it. 
-//   "/"		=> {[{"home" "/"}] ""} // this one should probably be {[] ""} instead
+//   "/"		=> {[] "home"}
 //   "/test.md"		=> {[{"home" "/"}] "test.md"}
-//   "/a/b/test.md"	=>   {[{"home" "/"} {"a" "/a"} {"b" "/a/b"}] "test.md"}
+//   "/a/b/test.md"	=> {[{"home" "/"} {"a" "/a"} {"b" "/a/b"}] "test.md"}
 //   "/a/b/c/test.md"	=> {[{"home" "/"} {"a" "/a"} {"b" "/a/b"} {"c" "/a/b/c"}] "test.md"}
 func Breadcrumbs(uri string) Trail {
+	if uri == "/" {
+		links := make([]Crumb, 0, 0)
+		return Trail { Links: links, Name: "home"}
+	}
 	split := strings.Split(uri, "/")
 	links := make([]Crumb, 0, len(split)+1)
 	links = append(links, Crumb{Name: "home", URI: "/"})
