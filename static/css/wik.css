@@ -1,5 +1,8 @@
-body { font-family: sans-serif; }
+body { font-family: sans-serif; margin: 0px; padding: 0px; }
 
+.content { padding-top: 3%; }
+
+.controls { position: fixed; z-index: 10; background-color: #eee; width: 100%; padding: .5%; }
 .controls .breadcrumbs { display: inline-block; }
 .controls .remove, .controls .edit { float: right; margin-left: 15px; }
 

@@ -1,11 +1,11 @@
 {{define "head"}}<title>Editing A Page</title>{{end}}
 {{define "controls"}}{{end}}
 {{define "body"}}
-<form action="/api/edit/{{.URI}}" method="POST" class="editor">
+<form action="/api/edit{{.URI}}" method="POST" class="editor">
   <textarea id="new_contents" name="new_contents" language="markdown">{{.Raw}}</textarea>
   <div class="editor-controls">
     <input class="submit" type="submit" value="Save" />
-    <a href="/{{.URI}}">Cancel</a>
+    <a href="{{.URI}}">Cancel</a>
   </div>
 </form>
 {{end}}
