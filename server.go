@@ -17,20 +17,21 @@ func WikiHandlers (wiki *Wiki) {
 }
 
 func ShowPage (wiki *Wiki) func (http.ResponseWriter, *http.Request) {
-	show, _ := template.ParseFiles("static/templates/show.html")
+	show := template.Must(template.ParseFiles("static/templates/show.html", "static/templates/base.html"))
 	create, _ := template.ParseFiles("static/templates/create.html")
-	flist, _ := template.ParseFiles("static/templates/list.html")
+	flist := template.Must(template.ParseFiles("static/templates/list.html", "static/templates/base.html"))
 	return func (w http.ResponseWriter, r *http.Request) {
 		p, err := wiki.Local(r.URL.Path)
 		if err == nil { 
 			info, err := os.Stat(p)
 			if err == nil && info.IsDir() {
 				dir, e := wiki.GetDir(r.URL.Path)
-				if e == nil { flist.Execute(w, dir) }
+				lst := &List{URI: r.URL.Path, Links: dir}
+				if e == nil { flist.ExecuteTemplate(w, "base", lst) }
 			} else if err == nil {
 				pg, e := wiki.GetPage(r.URL.Path)
 				pg.ProcessMarkdown()
-				if e == nil { show.Execute(w, pg) }
+				if e == nil { show.ExecuteTemplate(w, "base", pg) }
 			} else {
 				create.Execute(w, r.URL.Path)
 			}
@@ -39,10 +40,10 @@ func ShowPage (wiki *Wiki) func (http.ResponseWriter, *http.Request) {
 }
 
 func ShowEdit (wiki *Wiki) func (http.ResponseWriter, *http.Request) {
-	t, _ := template.ParseFiles("static/templates/edit.html")
+	t := template.Must(template.ParseFiles("static/templates/edit.html", "static/templates/base.html"))
 	return func (w http.ResponseWriter, r *http.Request) {
-		pg, err := wiki.GetPage(r.URL.Path[len("/edit/"):])
-		if err == nil { t.Execute(w, pg) }
+		pg, err := wiki.GetPage(r.URL.Path[len("/edit"):])
+		if err == nil { t.ExecuteTemplate(w, "base", pg) }
 	}
 }
 
@@ -76,6 +77,11 @@ func EditPage (wiki *Wiki) func (http.ResponseWriter, *http.Request) {
 			http.Redirect(w, r, "/" + path, http.StatusFound)
 		}
 	}
+}
+
+type List struct {
+	URI string
+	Links []PageInfo
 }
 
 type Crumb struct {
@@ -112,4 +118,9 @@ func Breadcrumbs(uri string) Trail {
 // Helper method for templates. Calls Breadcrumbs on the URI of a *Page
 func (pg *Page) CrumbsOf() Trail {
 	return Breadcrumbs(pg.URI)
+}
+
+// Helper method for templates. Calls Breadcrumbs on the URI of a *List
+func (lst *List) CrumbsOf() Trail {
+	return Breadcrumbs(lst.URI)
 }

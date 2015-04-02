@@ -1,16 +1,8 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
-  <head></head>
-  <body>
-    {{ $trail := .CrumbsOf }}
-    / {{ range $crumb := $trail.Links }}
-    <a href="{{$crumb.URI}}">{{ $crumb.Name }}</a> / 
-    {{ end }}
-    {{ $trail.Name }}
-    <form method="POST" id="" action="/api/remove{{.URI}}">
-      <input type="submit" name="submit" value="Remove" class="submit" />
-    </form>
-    <a href="/edit{{.URI}}">Edit</a>
-    {{.Body}}
-  </body>
-</html>
+{{define "head"}}<title>A Page</title>{{end}}
+{{define "body"}}
+<form method="POST" id="" action="/api/remove{{.URI}}">
+  <input type="submit" name="submit" value="Remove" class="submit" />
+</form>
+<a href="/edit{{.URI}}">Edit</a>
+{{.Body}}
+{{end}}
