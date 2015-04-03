@@ -10,6 +10,7 @@ import (
 func main() {
 	var port = flag.Int("port", 8080, "Specify the TCP port this server should listen on. Defaults to 8080.")
 	flag.Parse()
+
 	wik := &Wiki{strings.TrimRight(flag.Arg(0), "/")}
 	WikiHandlers(wik)
 
