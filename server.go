@@ -17,10 +17,10 @@ func WikiHandlers (wiki *Wiki) {
 }
 
 func ShowPage (wiki *Wiki) func (http.ResponseWriter, *http.Request) {
+	show := template.Must(template.ParseFiles("static/templates/show.html", "static/templates/base.html"))
+	create := template.Must(template.ParseFiles("static/templates/create.html", "static/templates/base.html"))
+	flist := template.Must(template.ParseFiles("static/templates/list.html", "static/templates/base.html"))
 	return func (w http.ResponseWriter, r *http.Request) {
-		show := template.Must(template.ParseFiles("static/templates/show.html", "static/templates/base.html"))
-		create := template.Must(template.ParseFiles("static/templates/create.html", "static/templates/base.html"))
-		flist := template.Must(template.ParseFiles("static/templates/list.html", "static/templates/base.html"))
 		p, err := wiki.Local(r.URL.Path)
 		if err == nil { 
 			info, err := os.Stat(p)
@@ -45,8 +45,8 @@ func ShowPage (wiki *Wiki) func (http.ResponseWriter, *http.Request) {
 }
 
 func ShowEdit (wiki *Wiki) func (http.ResponseWriter, *http.Request) {
+	t := template.Must(template.ParseFiles("static/templates/edit.html", "static/templates/base.html"))
 	return func (w http.ResponseWriter, r *http.Request) {
-		t := template.Must(template.ParseFiles("static/templates/edit.html", "static/templates/base.html"))
 		pg, err := wiki.GetPage(r.URL.Path[len("/edit"):])
 		if err == nil { t.ExecuteTemplate(w, "base", pg) }
 	}

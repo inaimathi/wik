@@ -3,14 +3,16 @@ package main
 import (
 	"os"
 	"fmt"
+	"strings"
 	"net/http"
 )
 
 func main() {
 	fmt.Println(os.Args) // command-line args
 	fmt.Println(os.Args[1:]) // as above, without program name
+	fmt.Println(os.Args[1])
 
-	wik := &Wiki{"/home/inaimathi/tmp"}
+	wik := &Wiki{strings.TrimRight(os.Args[1], "/")}
 
 	WikiHandlers(wik)
 	
