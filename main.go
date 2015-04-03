@@ -4,7 +4,6 @@ import (
 	"os"
 	"fmt"
 	"net/http"
-	"io/ioutil"
 )
 
 func main() {

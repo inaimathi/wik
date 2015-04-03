@@ -5,8 +5,10 @@
 <ul class="file-list">
   {{ range $file := .Links }}
   <li>
-    <code>{{ if $file.IsDir }}[D]{{ else }}[F] {{ end }}</code>
-    <a href="{{$file.URI}}">{{$file.Name}}</a>
+    <img src="/static/img/{{ if $file.IsDir }}dir{{ else }}file{{ end }}.png" />
+    <a href="{{$file.URI}}">
+      {{$file.Name}}
+    </a>
   </li>
   {{ end }}
 </ul>
