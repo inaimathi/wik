@@ -8,13 +8,12 @@ import (
 )
 
 func main() {
-	fmt.Println(os.Args) // command-line args
-	fmt.Println(os.Args[1:]) // as above, without program name
-	fmt.Println(os.Args[1])
-
 	wik := &Wiki{strings.TrimRight(os.Args[1], "/")}
-
 	WikiHandlers(wik)
+
+	fmt.Print("Serving ")
+	fmt.Println(os.Args[1])
+	fmt.Println("Listening on local port 8080...")	
 	
 	static := http.FileServer(http.Dir("static"))
 	http.Handle("/static/", http.StripPrefix("/static/", static))
